@@ -31,13 +31,13 @@ namespace Huffman {
 
             tree.buildTreeFromTextFile(path);
 
-            Console.WriteLine("Encoded sentence : " + tree.EncodedData);
+            //Console.WriteLine("Encoded sentence : " + tree.EncodedData);
 
             Console.WriteLine("");
 
             Console.Write("Decoded sentence : ");
 
-            tree.decode(decodedText);
+            tree.decode(decodedText, 0);
 
             decodedText.Close();
 

@@ -350,10 +350,10 @@ namespace Huffman
         }
 
 
-        public void decode(StreamWriter writer)
+        public void decode(StreamWriter writer, int index)
         {
 
-            if (this.EncodedData == "")
+            if (this.EncodedData.Length - index == 0)
             {
                 return;
             }
@@ -362,22 +362,17 @@ namespace Huffman
 
             while (this.Root.getNodeFromPath(path).TheChar == '\0')
             {
-                path += this.EncodedData[path.Length];
+                path += this.EncodedData[path.Length + index];
             }
 
-            char test = this.Root.getNodeFromPath(path).TheChar;
-            writer.Write(test);
-            Console.Write(test);
+            writer.Write(this.Root.getNodeFromPath(path).TheChar);
 
-            this.EncodedData = EncodedData.Substring(path.Length);
-
-            this.decode(writer);
+            this.decode(writer, path.Length + index);
 
         }
 
         private int getMaxLenghtOfTheDictionary()
         {
-
             int maxLenght = 0;
 
             foreach (KeyValuePair<string, char> entry in this.Dictionary)
