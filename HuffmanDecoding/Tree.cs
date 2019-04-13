@@ -6,14 +6,17 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Text.RegularExpressions;
 
-namespace HuffmanDecoding {
-    class Node {
+namespace Huffman
+{
+    class Node
+    {
         private int value;
         private Node left;
         private Node right;
-        private String theChar;
+        private char theChar;
 
-        public Node(String theChar) {
+        public Node(char theChar)
+        {
             this.value = 0;
             this.left = null;
             this.right = null;
@@ -21,27 +24,28 @@ namespace HuffmanDecoding {
         }
 
         public int Value { get => value; set => this.value = value; }
-        public string TheChar { get => theChar; set => theChar = value; }
+        public char TheChar { get => theChar; set => theChar = value; }
         internal Node Left { get => left; set => left = value; }
         internal Node Right { get => right; set => right = value; }
 
         // Get the Node according to the path
         public Node getNodeFromPath(String path)
-        {            
-            if(path == "")
+        {
+            if (path == "")
             {
                 return this;
             }
 
-            if(path[0] == '0')
+            if (path[0] == '0')
             {
-                if(this.Right == null)
+                if (this.Right == null)
                 {
                     return null;
                 }
 
                 return this.Right.getNodeFromPath(path.Substring(1));
-            } else
+            }
+            else
             {
                 if (this.Left == null)
                 {
@@ -52,135 +56,131 @@ namespace HuffmanDecoding {
             }
         }
 
-        // Build the tree
-        public void buildTree(Dictionary<string, string> dictionary, String theString, int maxLenght)
+        public String getPathFromNode(char theChar)
         {
 
-            if (theString.Length > maxLenght)
+            if (this.TheChar == theChar)
             {
-                return;
+                return "";
             }
 
-            String charValue = "-1";
-
-            if (dictionary.ContainsKey(theString))
-            {
-                charValue = dictionary[theString];
-            }
-
-            if (charValue == "-1")
-            {
-                this.Left = new Node("-1");
-                this.Right = new Node("-1");
-
-                this.Right.buildTree(dictionary, theString + '0', maxLenght);
-                this.Left.buildTree(dictionary, theString + '1', maxLenght);
-
-                return;
-
-            } else
-            {
-                this.TheChar = charValue;
-
-                return;
-            }
-        }
-
-        /*
-
-        public Node buildTree(Node theNode, Dictionary<string, string> dictionary, String theString, int maxLenght) {
-
-            // If the length of the string is higher than the maxLenght we know that we need to stop the algorithm there
-            if (theString.Length > maxLenght)
+            if (this.Left == null && this.Right == null)
             {
                 return null;
             }
 
-            String charValue = "-1";
+            if (this.Right != null)
+            {
 
-            // First we need to check if we are at a leaf, if we can gather the letter from the theString that is to say we are at a string
+                String str = this.Right.getPathFromNode(theChar);
+
+                if (str != null)
+                {
+                    return str + "1";
+                }
+            }
+
+            if (this.Left != null)
+            {
+                String str = this.Left.getPathFromNode(theChar);
+
+                if (str != null)
+                {
+                    return str + "0";
+                }
+            }
+
+
+
+            return null;
+        }
+
+        // Build the tree from the dictionary
+        public void buildTree(Dictionary<string, char> dictionary, String theString, int maxLenght)
+        {
+
+            if (theString.Length > maxLenght)
+            {
+                return;
+            }
+
+            char charValue = '\0';
 
             if (dictionary.ContainsKey(theString))
             {
                 charValue = dictionary[theString];
             }
 
-            // If the charValue is different from -1 that is to say we are at a leaf and we can thus stop the algorithm for this node
-            if (charValue != "-1")
+            if (charValue == '\0')
             {
-                Console.WriteLine(String.Concat(Enumerable.Repeat("-", theString.Length)) + charValue + " " + theString);
-                return new Node(charValue);
+                this.Left = new Node('\0');
+                this.Right = new Node('\0');
+
+                this.Right.buildTree(dictionary, theString + '0', maxLenght);
+                this.Left.buildTree(dictionary, theString + '1', maxLenght);
             }
             else
-            { 
-                Console.WriteLine(String.Concat(Enumerable.Repeat("-", theString.Length)) + "* " + theString);
-                theNode.Left = buildTree(new Node("-1"), dictionary, theString + "1", maxLenght);
-                theNode.Right = buildTree(new Node("-1"), dictionary, theString + "0", maxLenght);
-
-                return theNode;
+            {
+                this.TheChar = charValue;
             }
-
         }
-
-        */
 
         public void display(int i)
         {
-            if(this == null)
+            if (this == null)
             {
                 return;
             }
 
-            Console.WriteLine(String.Concat(Enumerable.Repeat("-", i)) + this.theChar);
+            Console.WriteLine(String.Concat(Enumerable.Repeat("-", i)) + this.theChar + " (" + this.Value + ")");
 
-            if(this.Left != null)
+            if (this.Left != null)
             {
                 this.Left.display(i++);
             }
 
-            if(this.Right != null)
+            if (this.Right != null)
             {
                 this.Right.display(i++);
             }
 
-            
+
         }
-
-
     }
 
-    class Tree {
+    class Tree
+    {
         private Node root;
-        private Dictionary<String, String> dictionary;
+        private Dictionary<String, char> dictionary;
         private int maxLenght;
         private String encodedData;
 
-        public Tree() {
+        public Tree()
+        {
             this.Root = null;
-            this.Dictionary = new Dictionary<string, string>();
+            this.Dictionary = new Dictionary<string, char>();
             this.MaxLenght = 0;
             this.EncodedData = "";
         }
 
-        public Dictionary<string, string> Dictionary { get => dictionary; set => dictionary = value; }
+        public Dictionary<string, char> Dictionary { get => dictionary; set => dictionary = value; }
         public int MaxLenght { get => maxLenght; set => maxLenght = value; }
         public string EncodedData { get => encodedData; set => encodedData = value; }
         internal Node Root { get => root; set => root = value; }
 
-        public void buildTreeFromTextFile() {
-
-            String path = "..\\..\\data.txt";
-
-            String letter = "";
+        public void buildTreeFromTextFile(String path)
+        {
 
             //We build the dictionary from the data.txt file
-            if (File.Exists(path)) {
+            if (File.Exists(path))
+            {
                 String[] lines = File.ReadAllLines(path);
 
                 Boolean isEncodedData = false;
 
-                foreach (String line in lines) {
-              
+                foreach (String line in lines)
+                {
+
                     if (isEncodedData)
                     {
                         this.EncodedData = line;
@@ -190,71 +190,167 @@ namespace HuffmanDecoding {
                     // If we get a blank that is to say this is the end of the dictionary part
                     if (line.Length <= 2) { isEncodedData = true; }
 
-                    if(!isEncodedData) {
 
-                        letter = line.Split(' ')[0];
+                    //Here we have to cases, the one where we have printable characters and the one we do not have
+                    if (!isEncodedData)
+                    {
 
-                        if (letter == "'")
+                        if (line[1] == '\\' && line[2] == 'n')
                         {
-                            this.Dictionary[line.Split(' ')[2]] = " ";
-                        } else
-                        {
-                            this.Dictionary[line.Split(' ')[1]] = Regex.Replace(letter, "[']", "");
+                            this.Dictionary.Add(Regex.Replace(line, "('.*' )", ""), '\n');
                         }
-
-                        
+                        else
+                        {
+                            this.Dictionary.Add(Regex.Replace(line, "('.*' )", ""), line[1]);
+                        }
                     }
                 }
             }
 
             this.MaxLenght = this.getMaxLenghtOfTheDictionary();
 
-            String theString = "";
+            this.root = new Node('\0');
 
-            this.root = new Node("-1");
-
-            this.root.buildTree(this.Dictionary, theString, maxLenght);
+            this.root.buildTree(this.Dictionary, "", this.maxLenght);
         }
 
-        /*
-
-        internal void decode(Node node)
+        public static Node getTreeFromEncodedFile(StreamWriter writer, String path)
         {
 
-            // If encodedData is empty we have finished to decode the code
-            if (this.EncodedData == "" || node == null)
+            Dictionary<char, int> myDictionary = new Dictionary<char, int>();
+
+            String[] lines = File.ReadAllLines(path);
+
+            int count = 0;
+
+            foreach (String line in lines)
             {
-                return;
+                foreach (char myChar in line)
+                {
+
+                    if (myDictionary.ContainsKey(myChar))
+                    {
+                        myDictionary[myChar]++;
+                    } else
+                    {
+                        myDictionary[myChar] = 1;
+                    }
+
+                    count++;
+                }
+
+                if (myDictionary.ContainsKey('\n'))
+                {
+                    myDictionary['\n']++;
+                }
+                else
+                {
+                    myDictionary['\n'] = 1;
+                }
             }
 
-            if (node.TheChar != "-1")
+            Dictionary<char, int> sortedDictionary = new Dictionary<char, int>();
+
+            var sortedDict = from entry in myDictionary orderby entry.Value ascending select entry;
+
+            foreach (KeyValuePair<char, int> entry in sortedDict)
             {
-                Console.WriteLine(node.TheChar + " " + this.EncodedData);
-                this.EncodedData = this.EncodedData.Substring(1);
-                this.decode(this.Root);
+                sortedDictionary[entry.Key] = myDictionary[entry.Key];
             }
 
-            // If the first character is a 1 that is to say we need to go to the right else to the left
-            if (this.EncodedData[0] == '0')
-            {
-                //We remove the first character
-                this.EncodedData = this.EncodedData.Substring(1);
+            Console.WriteLine("\n\n");
 
-                this.decode(node.Right);
-            }
-            else
-            {
-                //We remove the first character
-                this.EncodedData = this.EncodedData.Substring(1);
+            List<Node> nodes = new List<Node>();
+            List<char> charList = new List<char>();
+            Node node;
 
-                this.decode(node.Left);
+            foreach (KeyValuePair<char, int> entry in sortedDictionary)
+            {
+                node = new Node(entry.Key);
+                node.Value = entry.Value;
+                nodes.Add(node);
+                charList.Add(entry.Key);
             }
+
+            //The comparator object to sort my list
+            GFG gg = new GFG();
+
+            nodes.Sort(gg);
+
+            // We are building the tree
+            while (nodes.Count != 1)
+            {
+                node = new Node('\0');
+                node.Left = nodes.First();
+                nodes.Remove(nodes.First());
+                node.Right = nodes.First();
+                nodes.Remove(nodes.First());
+                node.Value = node.Right.Value + node.Left.Value;
+
+                // Add the new Node and sort the list
+                nodes.Add(node);
+                nodes.Sort(gg);
+            }
+
+            // We begin to write the data into the txt file, this data is all the char with their code
+            foreach (Char theChar in charList)
+            {
+
+                if (theChar == '\n')
+                {
+                    writer.WriteLine("'" + "\\n" + "' " + new String(nodes.First().getPathFromNode(theChar).Reverse().ToArray()));
+                } else
+                {
+                    writer.WriteLine("'" + theChar + "' " + new String(nodes.First().getPathFromNode(theChar).Reverse().ToArray()));
+                }
+            }
+
+            writer.WriteLine("");
+
+            // Now we can return the root of the tree 
+            return nodes.First();
+
+        }
+
+        // This method is used to write the encoded text into a txt file from an Huffman tree
+        public static void encodeFile(StreamWriter writer, Node root, String path)
+        {
+
+            // We begin to write the data into the txt file, this data is all the char with their code
+
+            String[] lines = File.ReadAllLines(path);
+
+            foreach (String line in lines)
+            {
+                foreach (char myChar in line)
+                {
+                    writer.Write(new String(root.getPathFromNode(myChar).Reverse().ToArray()));
+                }
+
+                writer.Write(new String(root.getPathFromNode('\n').Reverse().ToArray()));
+            }
+
+        }
+
+        public static Dictionary<char, int> getDictionaryBySameValue(Dictionary<char, int> aDictionary, int valueToFind)
+        {
+
+            Dictionary<char, int> dicToReturn = new Dictionary<char, int>();
+
+            foreach (KeyValuePair<char, int> entry in aDictionary)
+            {
+                if (entry.Value == valueToFind)
+                {
+                    dicToReturn[entry.Key] = valueToFind;
+                }
+            }
+
+            return dicToReturn;
+
         }
 
 
-        */
-
-        public void decode()
+        public void decode(StreamWriter writer)
         {
 
             if (this.EncodedData == "")
@@ -264,26 +360,30 @@ namespace HuffmanDecoding {
 
             String path = "";
 
-            while (this.Root.getNodeFromPath(path).TheChar == "-1")
+            while (this.Root.getNodeFromPath(path).TheChar == '\0')
             {
                 path += this.EncodedData[path.Length];
             }
 
-            Console.Write(this.Root.getNodeFromPath(path).TheChar);
+            char test = this.Root.getNodeFromPath(path).TheChar;
+            writer.Write(test);
+            Console.Write(test);
 
             this.EncodedData = EncodedData.Substring(path.Length);
 
-            this.decode();
+            this.decode(writer);
 
         }
 
-        private int getMaxLenghtOfTheDictionary() {
+        private int getMaxLenghtOfTheDictionary()
+        {
 
             int maxLenght = 0;
 
-            foreach (KeyValuePair<string, string> entry in this.Dictionary)
+            foreach (KeyValuePair<string, char> entry in this.Dictionary)
             {
-                if(entry.Key.Length >= maxLenght) {
+                if (entry.Key.Length >= maxLenght)
+                {
                     maxLenght = entry.Key.Length;
                 }
             }
@@ -291,4 +391,29 @@ namespace HuffmanDecoding {
             return maxLenght;
         }
     }
+
+    class GFG : IComparer<Node>
+    {
+        public int Compare(Node x, Node y)
+        {
+            if (x == null || y == null)
+            {
+                return 0;
+            }
+
+            if (x.Value < y.Value)
+            {
+               return -1;
+            }
+
+            if (x.Value > y.Value)
+            {
+                return 1;
+            }
+
+            return 0;
+
+        }
+    }
+
 }

@@ -5,20 +5,41 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 
-namespace HuffmanDecoding {
+namespace Huffman {
     class Program
     {
         static void Main(string[] args)
         {
 
+            StreamWriter writer = new StreamWriter("..\\..\\data.txt");
+            StreamWriter decodedText = new StreamWriter("..\\..\\decodedText.txt");
+
+
             Tree tree = new Tree();
-            tree.buildTreeFromTextFile();
+
+            String path = "..\\..\\data.txt";
+
+            String pathDataToEncode = "..\\..\\dataToEncode.txt";
+
+            Node root = Tree.getTreeFromEncodedFile(writer, pathDataToEncode);
+
+            Tree.encodeFile(writer, root, pathDataToEncode);
+
+            writer.Close();
+
+            Console.WriteLine("");
+
+            tree.buildTreeFromTextFile(path);
 
             Console.WriteLine("Encoded sentence : " + tree.EncodedData);
 
+            Console.WriteLine("");
+
             Console.Write("Decoded sentence : ");
 
-            tree.decode();
+            tree.decode(decodedText);
+
+            decodedText.Close();
 
             Console.ReadKey();
 
