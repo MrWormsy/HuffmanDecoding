@@ -153,20 +153,19 @@ namespace Huffman
         private Node root;
         private Dictionary<String, char> dictionary;
         private int maxLenght;
-        private String encodedData;
 
         public Tree()
         {
             this.Root = null;
             this.Dictionary = new Dictionary<string, char>();
             this.MaxLenght = 0;
-            this.EncodedData = "";
         }
 
         public Dictionary<string, char> Dictionary { get => dictionary; set => dictionary = value; }
         public int MaxLenght { get => maxLenght; set => maxLenght = value; }
-        public string EncodedData { get => encodedData; set => encodedData = value; }
         internal Node Root { get => root; set => root = value; }
+
+        /*
 
         public void buildTreeFromTextFile(String path)
         {
@@ -180,12 +179,6 @@ namespace Huffman
 
                 foreach (String line in lines)
                 {
-
-                    if (isEncodedData)
-                    {
-                        this.EncodedData = line;
-                        break;
-                    }
 
                     // If we get a blank that is to say this is the end of the dictionary part
                     if (line.Length <= 2) { isEncodedData = true; }
@@ -206,6 +199,41 @@ namespace Huffman
                     }
                 }
             }
+
+            this.MaxLenght = this.getMaxLenghtOfTheDictionary();
+
+            this.root = new Node('\0');
+
+            this.root.buildTree(this.Dictionary, "", this.maxLenght);
+        }
+
+        */
+
+        public void buildTreeFromTextFile(StreamReader reader)
+        {
+                String line;
+
+                while (true)
+                {
+                    line = reader.ReadLine();
+
+                    //Here we have to cases, the one where we have printable characters and the one we do not have
+                    if (line.Length > 2)
+                    {
+
+                        if (line[1] == '\\' && line[2] == 'n')
+                        {
+                            this.Dictionary.Add(Regex.Replace(line, "('.*' )", ""), '\n');
+                        }
+                        else
+                        {
+                            this.Dictionary.Add(Regex.Replace(line, "('.*' )", ""), line[1]);
+                        }
+                    } else
+                    {
+                        break;
+                    }
+                }
 
             this.MaxLenght = this.getMaxLenghtOfTheDictionary();
 
@@ -257,8 +285,6 @@ namespace Huffman
             {
                 sortedDictionary[entry.Key] = myDictionary[entry.Key];
             }
-
-            Console.WriteLine("\n\n");
 
             List<Node> nodes = new List<Node>();
             List<char> charList = new List<char>();
@@ -349,11 +375,10 @@ namespace Huffman
 
         }
 
-
-        public void decode(StreamWriter writer, int index)
+        public void decode(StreamWriter writer, StreamReader reader, int index)
         {
 
-            if (this.EncodedData.Length - index == 0)
+            if (reader.EndOfStream)
             {
                 return;
             }
@@ -362,12 +387,12 @@ namespace Huffman
 
             while (this.Root.getNodeFromPath(path).TheChar == '\0')
             {
-                path += this.EncodedData[path.Length + index];
+                path += ((char) reader.Read());
             }
 
             writer.Write(this.Root.getNodeFromPath(path).TheChar);
 
-            this.decode(writer, path.Length + index);
+            this.decode(writer, reader, path.Length + index);
 
         }
 

@@ -14,10 +14,9 @@ namespace Huffman {
             StreamWriter writer = new StreamWriter("..\\..\\data.txt");
             StreamWriter decodedText = new StreamWriter("..\\..\\decodedText.txt");
 
+            //StreamReader reader = new StreamReader("..\\..\\data.txt");
 
-            Tree tree = new Tree();
-
-            String path = "..\\..\\data.txt";
+            Tree tree = new Tree();            
 
             String pathDataToEncode = "..\\..\\dataToEncode.txt";
 
@@ -27,19 +26,18 @@ namespace Huffman {
 
             writer.Close();
 
-            Console.WriteLine("");
+            Console.WriteLine("----- File has been encoded -----");
 
-            tree.buildTreeFromTextFile(path);
-
-            //Console.WriteLine("Encoded sentence : " + tree.EncodedData);
-
-            Console.WriteLine("");
-
-            Console.Write("Decoded sentence : ");
-
-            tree.decode(decodedText, 0);
+            using (var reader = new StreamReader("..\\..\\data.txt"))
+            {
+                tree.buildTreeFromTextFile(reader);
+                tree.decode(decodedText, reader, 0);
+            }
 
             decodedText.Close();
+            //reader.Close();
+
+            Console.WriteLine("----- File has been decoded -----");
 
             Console.ReadKey();
 
