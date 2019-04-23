@@ -374,23 +374,21 @@ namespace Huffman
         public void decode(StreamWriter writer, StreamReader reader, String path)
         {
 
-            if (reader.EndOfStream)
+
+            while (!reader.EndOfStream)
             {
-                return;
+                while (this.Root.getNodeFromPath(path).TheChar == '\0')
+                {
+                    path += ((char)reader.Read());
+                }
+
+                writer.Write(this.Root.getNodeFromPath(path).TheChar);
+
+                path = "";
             }
-
-            while (this.Root.getNodeFromPath(path).TheChar == '\0')
-            {
-                path += ((char) reader.Read());
-            }
-
-            writer.Write(this.Root.getNodeFromPath(path).TheChar);
-
-            this.decode(writer, reader, "");
-
         }
 
-        private int getMaxLenghtOfTheDictionary()
+            private int getMaxLenghtOfTheDictionary()
         {
             int maxLenght = 0;
 

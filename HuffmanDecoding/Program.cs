@@ -5,7 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 
-namespace Huffman {
+namespace Huffman
+{
     class Program
     {
         static void Main(string[] args)
@@ -16,7 +17,7 @@ namespace Huffman {
 
             //StreamReader reader = new StreamReader("..\\..\\data.txt");
 
-            Tree tree = new Tree();            
+            Tree tree = new Tree();
 
             String pathDataToEncode = "..\\..\\dataToEncode.txt";
 
