@@ -31,27 +31,23 @@ namespace Huffman
         // Get the Node according to the path
         public Node getNodeFromPath(String path)
         {
-            if (path == "")
+
+            if (path == null)
+            {
+                return this;
+            }
+
+            if (path.Length == 0)
             {
                 return this;
             }
 
             if (path[0] == '0')
             {
-                if (this.Right == null)
-                {
-                    return null;
-                }
-
                 return this.Right.getNodeFromPath(path.Substring(1));
             }
             else
             {
-                if (this.Left == null)
-                {
-                    return null;
-                }
-
                 return this.Left.getNodeFromPath(path.Substring(1));
             }
         }
@@ -375,15 +371,13 @@ namespace Huffman
 
         }
 
-        public void decode(StreamWriter writer, StreamReader reader, int index)
+        public void decode(StreamWriter writer, StreamReader reader, String path)
         {
 
             if (reader.EndOfStream)
             {
                 return;
             }
-
-            String path = "";
 
             while (this.Root.getNodeFromPath(path).TheChar == '\0')
             {
@@ -392,7 +386,7 @@ namespace Huffman
 
             writer.Write(this.Root.getNodeFromPath(path).TheChar);
 
-            this.decode(writer, reader, path.Length + index);
+            this.decode(writer, reader, "");
 
         }
 
