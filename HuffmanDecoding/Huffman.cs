@@ -1,8 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 using System.Diagnostics;
 
@@ -33,7 +29,7 @@ namespace Huffman
             stopwatch.Start();
 
             //The root of the Huffman tree from the encoded file
-            Node root = Tree.getTreeFromEncodedFile(encodedTextWriter, pathDataToEncode);
+            Node root = Tree.getTreeFromFileToEncode(encodedTextWriter, pathDataToEncode);
 
             //Encode the file from the root of the tree
             Tree.encodeFile(encodedTextWriter, root, pathDataToEncode);
@@ -54,7 +50,7 @@ namespace Huffman
             using (var reader = new StreamReader("..\\..\\data.txt"))
             {
                 //We build the tree from the encoded file which will be used to decode the file
-                tree.buildTreeFromTextFile(reader);
+                tree.buildTreeFromEncodedTextFile(reader);
 
                 //We decode each char using the tree and write it into the decodedTextWriter
                 tree.decode(decodedTextWriter, reader, "");
