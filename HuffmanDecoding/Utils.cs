@@ -207,29 +207,30 @@ namespace Huffman
 
         public void buildTreeFromTextFile(StreamReader reader)
         {
-                String line;
+            String line;
 
-                while (true)
+            while (true)
+            {
+                line = reader.ReadLine();
+
+                //Here we have to cases, the one where we have printable characters and the one we do not have
+                if (line.Length > 2)
                 {
-                    line = reader.ReadLine();
 
-                    //Here we have to cases, the one where we have printable characters and the one we do not have
-                    if (line.Length > 2)
+                    if (line[1] == '\\' && line[2] == 'n')
                     {
-
-                        if (line[1] == '\\' && line[2] == 'n')
-                        {
-                            this.Dictionary.Add(Regex.Replace(line, "('.*' )", ""), '\n');
-                        }
-                        else
-                        {
-                            this.Dictionary.Add(Regex.Replace(line, "('.*' )", ""), line[1]);
-                        }
-                    } else
+                        this.Dictionary.Add(Regex.Replace(line, "('.*' )", ""), '\n');
+                    }
+                    else
                     {
-                        break;
+                        this.Dictionary.Add(Regex.Replace(line, "('.*' )", ""), line[1]);
                     }
                 }
+                else
+                {
+                    break;
+                }
+            }
 
             this.MaxLenght = this.getMaxLenghtOfTheDictionary();
 
@@ -255,7 +256,8 @@ namespace Huffman
                     if (myDictionary.ContainsKey(myChar))
                     {
                         myDictionary[myChar]++;
-                    } else
+                    }
+                    else
                     {
                         myDictionary[myChar] = 1;
                     }
@@ -321,7 +323,8 @@ namespace Huffman
                 if (theChar == '\n')
                 {
                     writer.WriteLine("'" + "\\n" + "' " + new String(nodes.First().getPathFromNode(theChar).Reverse().ToArray()));
-                } else
+                }
+                else
                 {
                     writer.WriteLine("'" + theChar + "' " + new String(nodes.First().getPathFromNode(theChar).Reverse().ToArray()));
                 }
@@ -388,7 +391,7 @@ namespace Huffman
             }
         }
 
-            private int getMaxLenghtOfTheDictionary()
+        private int getMaxLenghtOfTheDictionary()
         {
             int maxLenght = 0;
 
@@ -415,7 +418,7 @@ namespace Huffman
 
             if (x.Value < y.Value)
             {
-               return -1;
+                return -1;
             }
 
             if (x.Value > y.Value)
