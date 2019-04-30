@@ -40,6 +40,9 @@ namespace Huffman
             //Stop the stopwatch
             stopwatch.Stop();
 
+            //Convert the encoded file to binary
+            Utils.convertFileToBinary("..\\..\\data.txt");
+
             //Warn the operator that the file has been encoded
             Console.WriteLine("----- File has been encoded (in " + stopwatch.ElapsedMilliseconds + "ms)-----");
 

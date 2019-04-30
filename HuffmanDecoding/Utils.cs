@@ -336,7 +336,6 @@ namespace Huffman
             }
 
             //Else we compare the values of the two nodes (0 means the two nodes are equal, 1 means x is greater than y and -1 means x is less than y)
-
             if (x.Value < y.Value)
             {
                 return -1;
@@ -348,6 +347,55 @@ namespace Huffman
             }
 
             return 0;
+        }
+    }
+
+    class Utils
+    {
+        public static void convertFileToBinary(String pathTextToConvert)
+        {
+
+            System.Text.ASCIIEncoding encoding = new System.Text.ASCIIEncoding();
+
+            StreamWriter writer = new StreamWriter(pathTextToConvert + ".dat");
+
+            String[] lines = File.ReadAllLines(pathTextToConvert);
+
+            foreach (String str in lines)
+            {
+
+                //If the current string is empty, that is to say the dictionnary part is finished
+                if(str == "")
+                {
+                    break;
+                }
+
+                writer.WriteLine(str);
+            }
+
+            writer.WriteLine("");
+            
+            String bin = lines.Last();
+
+            int rest = bin.Length % 8;
+            if (rest != 0)
+                bin = new string('0', 8 - rest) + bin; //pad the length out to by divideable by 4
+
+            int ii = 0;
+
+            for (int i = 0; i <= bin.Length - 8; i += 8)
+            {
+                if (ii % 9 == 0)
+                {
+                    ii = 0;
+                }
+                else
+                {
+                    writer.Write(Convert.ToByte(bin.Substring(i, 8), 2));
+                }
+
+                ii++;
+            }
         }
     }
 }
